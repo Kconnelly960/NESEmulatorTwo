@@ -60,27 +60,21 @@ void CPU::execute(short cycles) {
 
 			case LDA_ABS:
 			{
-				DOUBLE_WORD address = FetchWord(*mem, &cycles);
-				address << 8;
-				address &= FetchWord(*mem, &cycles);
+				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
 				A = ReadWord(*mem, &cycles, address);
 				LDASetFlags();
 			} break;
 
 			case LDA_ABS_X:
 			{
-				DOUBLE_WORD address = FetchWord(*mem, &cycles);
-				address << 8;
-				address &= FetchWord(*mem, &cycles);
+				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
 				A = ReadWord(*mem, &cycles, address + X);
 				LDASetFlags();
 			} break;
 
 			case LDA_ABS_Y:
 			{
-				DOUBLE_WORD address = FetchWord(*mem, &cycles);
-				address << 8;
-				address &= FetchWord(*mem, &cycles);
+				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
 				A = ReadWord(*mem, &cycles, address + Y);
 				LDASetFlags();
 			} break;
@@ -109,7 +103,7 @@ void CPU::execute(short cycles) {
 
 WORD CPU::FetchWord(Memory& mem, short* cycles) {
 	check_inbounds(PC);
-	WORD data = mem.get_memory(mem, PC);
+	WORD data = mem.GetMemoryWord(mem, PC);
 	PC++;
 	cycles--;
 	return data;
@@ -117,8 +111,15 @@ WORD CPU::FetchWord(Memory& mem, short* cycles) {
 
 WORD CPU::ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address) {
 	check_inbounds(address);
-	WORD data = mem.get_memory(mem, address);
+	WORD data = mem.GetMemoryWord(mem, address);
 	cycles--;
 	return data;
 };
 
+DOUBLE_WORD CPU::FetchDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address) {
+	check_inbounds(PC);
+	DOUBLE_WORD data = mem.GetMemoryDoubleWord(mem, address);
+	PC++;
+	cycles--;
+	return data;
+};

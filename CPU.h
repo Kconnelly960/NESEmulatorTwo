@@ -40,7 +40,9 @@ public:
 	void stack_push(CPU& cpu);
 	void execute(short cycles);
 	WORD FetchWord(Memory& mem, short* cycles);
+	DOUBLE_WORD FetchDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address);
 	WORD ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address);
 	void LDASetFlags();
+
 };
 #endif

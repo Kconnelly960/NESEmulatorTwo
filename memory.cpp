@@ -1,12 +1,19 @@
 #include "memory.h"
 #include <string.h>
 
-void Memory::set_memory(Memory& mem, WORD address, WORD data) {
+void Memory::SetMemory(Memory& mem, WORD address, WORD data) {
 	mem.memory[address] = data;
 }
 
-WORD Memory::get_memory(Memory& mem, WORD address) {
+WORD Memory::GetMemoryWord(Memory& mem, WORD address) {
 	return mem.memory[address];
+}
+
+DOUBLE_WORD Memory::GetMemoryDoubleWord(Memory& mem, WORD address) {
+	DOUBLE_WORD address = mem.memory[address];
+	address << 8;
+	address &= mem.memory[address + 1];
+	return address;
 }
 
 void Memory::init() {
