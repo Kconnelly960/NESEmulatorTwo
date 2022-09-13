@@ -13,6 +13,8 @@
 #define STACK_END 0x01FF
 #define STACK_SIZE 0x00FF
 
+
+//LDA opcodes
 #define LDA_I 0xA9
 #define LDA_ZP 0xA5 
 #define LDA_ZP_X 0xB5 
@@ -21,5 +23,8 @@
 #define LDA_ABS_Y 0xB9 
 #define LDA_IND_X 0xA1 
 #define LDA_IND_Y 0xB1 
+
+//JSR opcodes
+#define JSR_ABS 0x20
 
 #endif

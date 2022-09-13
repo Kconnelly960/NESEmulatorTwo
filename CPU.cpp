@@ -2,8 +2,8 @@
 #include <iostream>
 #include <assert.h>
 
-static void check_inbounds(unsigned short pc) {
-	assert(pc < TOTAL_MEMORY && pc > 0);
+static void check_inbounds(unsigned short address) {
+	assert(address < TOTAL_MEMORY && address > 0);
 }
 
 void CPU::LDASetFlags() {
@@ -28,7 +28,7 @@ void CPU::stack_pop(CPU& cpu) {
 };
 
 void CPU::stack_push(CPU& cpu) {
-
+	
 };
 
 
@@ -60,9 +60,45 @@ void CPU::execute(short cycles) {
 
 			case LDA_ABS:
 			{
-				DOUBLE_WORD address = ( (FetchWord(*mem, &cycles) << 8) & FetchWord(*mem, &cycles) );
+				DOUBLE_WORD address = FetchWord(*mem, &cycles);
+				address << 8;
+				address &= FetchWord(*mem, &cycles);
 				A = ReadWord(*mem, &cycles, address);
+				LDASetFlags();
 			} break;
+
+			case LDA_ABS_X:
+			{
+				DOUBLE_WORD address = FetchWord(*mem, &cycles);
+				address << 8;
+				address &= FetchWord(*mem, &cycles);
+				A = ReadWord(*mem, &cycles, address + X);
+				LDASetFlags();
+			} break;
+
+			case LDA_ABS_Y:
+			{
+				DOUBLE_WORD address = FetchWord(*mem, &cycles);
+				address << 8;
+				address &= FetchWord(*mem, &cycles);
+				A = ReadWord(*mem, &cycles, address + Y);
+				LDASetFlags();
+			} break;
+
+			case LDA_IND_X:
+			{
+				//TODO
+
+			}
+
+			case JSR_ABS:
+			{
+				DOUBLE_WORD address = FetchWord(*mem, &cycles);
+				address << 8;
+				address &= FetchWord(*mem, &cycles);
+				
+				PC = address;
+			}
 
 			default:
 				printf("Defaulted %i", opcode);
@@ -80,7 +116,7 @@ WORD CPU::FetchWord(Memory& mem, short* cycles) {
 };
 
 WORD CPU::ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address) {
-	check_inbounds(PC);
+	check_inbounds(address);
 	WORD data = mem.get_memory(mem, address);
 	cycles--;
 	return data;
