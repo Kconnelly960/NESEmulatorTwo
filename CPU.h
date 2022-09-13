@@ -39,8 +39,8 @@ public:
 	void stack_pop(CPU& cpu);
 	void stack_push(CPU& cpu);
 	void execute(short cycles);
-	WORD FetchByte(Memory& mem, short* cycles);
-	WORD ReadByte(Memory& mem, short* cycles, WORD address);
+	WORD FetchWord(Memory& mem, short* cycles);
+	WORD ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address);
 	void LDASetFlags();
 };
 #endif

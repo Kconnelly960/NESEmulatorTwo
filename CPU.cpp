@@ -35,30 +35,34 @@ void CPU::stack_push(CPU& cpu) {
 void CPU::execute(short cycles) {
 
 	while (cycles > 0) {
-		WORD opcode = FetchByte(*mem, &cycles);
+		WORD opcode = FetchWord(*mem, &cycles);
 
 		switch (opcode) {
 			case LDA_I:
-				A = FetchByte(*mem, &cycles);
+				A = FetchWord(*mem, &cycles);
 				LDASetFlags();
 				break;
 
 			case LDA_ZP:
 			{
-				WORD zero_page_address = FetchByte(*mem, &cycles);
-				A = ReadByte(*mem, &cycles, zero_page_address);
+				WORD zero_page_address = FetchWord(*mem, &cycles);
+				A = ReadWord(*mem, &cycles, zero_page_address);
 				LDASetFlags();
-				break;
-			}
+			} break;
 
 			case LDA_ZP_X:
 			{
-				WORD zero_page_address = FetchByte(*mem, &cycles);
-				A = ReadByte(*mem, &cycles, zero_page_address + X);
+				WORD zero_page_address = FetchWord(*mem, &cycles);
+				A = ReadWord(*mem, &cycles, zero_page_address + X);
 				cycles--;
 				LDASetFlags();
-				break;
-			}
+			} break;
+
+			case LDA_ABS:
+			{
+				DOUBLE_WORD address = ( (FetchWord(*mem, &cycles) << 8) & FetchWord(*mem, &cycles) );
+				A = ReadWord(*mem, &cycles, address);
+			} break;
 
 			default:
 				printf("Defaulted %i", opcode);
@@ -67,19 +71,18 @@ void CPU::execute(short cycles) {
 	}
 };
 
-WORD CPU::FetchByte(Memory& mem, short* cycles) {
+WORD CPU::FetchWord(Memory& mem, short* cycles) {
 	check_inbounds(PC);
-	WORD instruction = mem.get_memory(mem, PC);
+	WORD data = mem.get_memory(mem, PC);
 	PC++;
 	cycles--;
-	return instruction;
+	return data;
 };
 
-
-WORD CPU::ReadByte(Memory& mem, short* cycles, WORD address) {
+WORD CPU::ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address) {
 	check_inbounds(PC);
-	WORD instruction = mem.get_memory(mem, address);
+	WORD data = mem.get_memory(mem, address);
 	cycles--;
-	return instruction;
+	return data;
 };
 
