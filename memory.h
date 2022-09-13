@@ -8,9 +8,10 @@ private:
 	WORD memory[TOTAL_MEMORY];
 
 public:
-	void SetMemory(Memory& memory, WORD address, WORD data);
-	WORD GetMemoryWord(Memory& memory, WORD address);
-	DOUBLE_WORD GetMemoryDoubleWord(Memory& mem, WORD address);
+	void SetMemoryWord(Memory& memory, DOUBLE_WORD address, WORD data);
+	void SetMemoryDoubleWord(Memory& mem, DOUBLE_WORD address, DOUBLE_WORD data);
+	WORD GetMemoryWord(Memory& memory, DOUBLE_WORD address);
+	DOUBLE_WORD GetMemoryDoubleWord(Memory& mem, DOUBLE_WORD address);
 	void init();
 };
 

@@ -11,9 +11,13 @@ void CPU::LDASetFlags() {
 	if ((A & 0b10000000) != 0) P |= 0b10000000;
 }
 
+void CPU::ADCSetFlags() {
+
+}
+
 void CPU::power_up(Memory* memory) {
 	A, X, Y, P = 0;
-	S = STACK_START;
+	SP = STACK_START;
 	PC = 0xFFFC;
 	mem = memory;
 	mem->init();
@@ -39,9 +43,10 @@ void CPU::execute(short cycles) {
 
 		switch (opcode) {
 			case LDA_I:
+			{
 				A = FetchWord(*mem, &cycles);
 				LDASetFlags();
-				break;
+			} break;
 
 			case LDA_ZP:
 			{
@@ -69,6 +74,7 @@ void CPU::execute(short cycles) {
 			{
 				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
 				A = ReadWord(*mem, &cycles, address + X);
+				if ((address + X) - address >= 0xFF) cycles--;
 				LDASetFlags();
 			} break;
 
@@ -76,22 +82,40 @@ void CPU::execute(short cycles) {
 			{
 				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
 				A = ReadWord(*mem, &cycles, address + Y);
+				if ((address + Y) - address >= 0xFF) cycles--;
 				LDASetFlags();
 			} break;
 
 			case LDA_IND_X:
 			{
-				//TODO
+				WORD address = FetchWord(*mem, &cycles);
+				address += X;
+				cycles--;
+				DOUBLE_WORD address_x = FetchDoubleWorld(*mem, &cycles, address);
+				A = ReadWord(*mem, &cycles, address_x);
+			} break;
 
-			}
+			case LDA_IND_Y:
+			{
+				WORD address = FetchWord(*mem, &cycles);
+				DOUBLE_WORD address_y = ReadDoubleWorld(*mem, &cycles, address) + Y;
+				if ((address + Y) - address >= 0xFF) cycles--;
+				A = ReadWord(*mem, &cycles, address_y);
+			} break;
 
 			case JSR_ABS:
 			{
-				DOUBLE_WORD address = FetchWord(*mem, &cycles);
-				address << 8;
-				address &= FetchWord(*mem, &cycles);
-				
+				DOUBLE_WORD address = FetchDoubleWorld(*mem, &cycles, PC);
+				mem->SetMemoryDoubleWord(*mem, SP, PC - 1);
+				SP += 2;
+				cycles -= 3;
 				PC = address;
+			} break;
+
+			case ADC_I:
+			{
+				int temp = FetchWord(*mem, &cycles);
+				temp += A;
 			}
 
 			default:
@@ -116,10 +140,20 @@ WORD CPU::ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address) {
 	return data;
 };
 
+// must increment program counter by 2 for every DOUBLE_WORD fetched
+// only works on little endien systems, to work on big endien systems 
+// you must swap the two bytes
 DOUBLE_WORD CPU::FetchDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address) {
 	check_inbounds(PC);
 	DOUBLE_WORD data = mem.GetMemoryDoubleWord(mem, address);
-	PC++;
-	cycles--;
+	PC += 2;
+	cycles -= 2;
+	return data;
+};
+
+DOUBLE_WORD CPU::ReadDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address) {
+	check_inbounds(PC);
+	DOUBLE_WORD data = mem.GetMemoryDoubleWord(mem, address);
+	cycles -= 2;
 	return data;
 };

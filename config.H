@@ -27,4 +27,21 @@
 //JSR opcodes
 #define JSR_ABS 0x20
 
+//ADC opcodes
+#define ADC_I 0x69
+#define ADC_ZP 0x65
+#define ADC_ZP_X 0x75
+#define ADC_ABS 0x6D
+#define ADC_ABS_X 0x7D
+#define ADC_ABS_Y 0x79
+#define ADC_IND_X 0x61
+#define ADC_IND_Y 0x71
+
+
+
+
+
+
+
+
 #endif

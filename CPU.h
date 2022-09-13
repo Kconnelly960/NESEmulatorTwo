@@ -27,7 +27,7 @@ private:
 	+--------- Negative
 	*/
 
-	WORD A, X, Y, S, P;
+	WORD A, X, Y, SP, P;
 	DOUBLE_WORD PC;
 	Memory* mem;
 
@@ -42,7 +42,9 @@ public:
 	WORD FetchWord(Memory& mem, short* cycles);
 	DOUBLE_WORD FetchDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address);
 	WORD ReadWord(Memory& mem, short* cycles, DOUBLE_WORD address);
+	DOUBLE_WORD ReadDoubleWorld(Memory& mem, short* cycles, DOUBLE_WORD address);
 	void LDASetFlags();
+	void ADCSetFlags();
 
 };
 #endif
