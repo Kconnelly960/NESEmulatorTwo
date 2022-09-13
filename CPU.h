@@ -29,16 +29,18 @@ private:
 
 	WORD A, X, Y, S, P;
 	DOUBLE_WORD PC;
-	Memory mem;
+	Memory* mem;
 
 
 public:
-	void power_up(Memory& memory);
+
+	void power_up(Memory* memory);
 	void reset(CPU& cpu);
 	void stack_pop(CPU& cpu);
 	void stack_push(CPU& cpu);
 	void execute(short cycles);
-	WORD FetchByte(Memory& mem);
-
+	WORD FetchByte(Memory& mem, short* cycles);
+	WORD ReadByte(Memory& mem, short* cycles, WORD address);
+	void LDASetFlags();
 };
 #endif
